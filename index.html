@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Calculator app</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/main.css">
+    <script src="js/main.js"></script>
+</head>
+
+<body>
+
+    <h1>Calculator.</h1>
+
+    <div class="debug" id="num1Complete">num1Complete</div>
+    <div class="debug" id="operatorPressedCount">operatorPressedCount</div>
+    <div class="debug" id="calculationComplete">calculationComplete</div>
+
+    <div class="container">
+
+        <div class="tapeDisplay" id="tapeDisplay">numbers</div>
+
+        <div class="calculator">
+            <div class="screen">
+                <div class="display" id="display1"></div>
+                <div class="display" id="display2">0</div>
+                <div class="display" id="display3"></div>
+            </div>
+
+            <div class="firstRow">
+                <button class="button specialButton" id="clearBtn" onclick="resetCalc(); clearTape()">C</button>
+                <button class="button specialButton" id="divide" onclick="logOperand(id)">/</button>
+                <button class="button specialButton" id="multiply" onclick="logOperand(id)">*</button>
+                <button class="button specialButton" id="subtract" onclick="logOperand(id)">-</button>
+            </div>
+
+            <div class="rightPanel">
+                <button class="button specialButton height2" id="add" onclick="logOperand(id)">+</button>
+                <button class="button specialButton height2" id="equalSign" onclick="calculateResult()">=</button>
+            </div>
+
+            <div class="mainPanel">
+                <div class="mainRow">
+                    <button class="button numButton" id="number7" onclick="logNum(id)">7</button>
+                    <button class="button numButton" id="number8" onclick="logNum(id)">8</button>
+                    <button class="button numButton" id="number9" onclick="logNum(id)">9</button>
+                </div>
+                <div class="mainRow">
+                    <button class="button numButton" id="number4" onclick="logNum(id)">4</button>
+                    <button class="button numButton" id="number5" onclick="logNum(id)">5</button>
+                    <button class="button numButton" id="number6" onclick="logNum(id)">6</button>
+                </div>
+                <div class="mainRow">
+                    <button class="button numButton" id="number1" onclick="logNum(id)">1</button>
+                    <button class="button numButton" id="number2" onclick="logNum(id)">2</button>
+                    <button class="button numButton" id="number3" onclick="logNum(id)">3</button>
+                </div>
+                <div class="mainRow">
+                    <button class="button numButton width2" id="number0" onclick="logNum(id)">0</button>
+                    <button class="button numButton" id="decimal" onclick="logNum(id)">.</button>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+</body>
+
+</html>
