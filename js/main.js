@@ -3,7 +3,11 @@
 
 
 
+
+
+///////////////////////////////////////////////////////////////////////////////
 // initializes vars
+///////////////////////////////////////////////////////////////////////////////
 var num1 = '';
 var num2 = '';
 var operator = '';
@@ -15,12 +19,17 @@ var calcStatus = {
     // add 1 every time operator button is pressed consecutively
     operatorPressedCount: 0,
     // was equal just pressed?
+    // 11-14-16 on further consideration, this may be not a great way to do this
     calculationComplete: false
 };
 
 
 
-// calculator functions
+
+
+///////////////////////////////////////////////////////////////////////////////
+// calculator math functions
+///////////////////////////////////////////////////////////////////////////////
 var calculator = {
     add: function (a, b) {
         return ((+a) + (+b));
@@ -38,7 +47,11 @@ var calculator = {
 
 
 
+
+
+///////////////////////////////////////////////////////////////////////////////
 // for logging history to paper tape
+///////////////////////////////////////////////////////////////////////////////
 function logTape(str) {
     if (tape.length > 500) {
         tape.shift();
@@ -54,7 +67,11 @@ function logTape(str) {
 
 
 
+
+
+///////////////////////////////////////////////////////////////////////////////
 // for updating calculator displays
+///////////////////////////////////////////////////////////////////////////////
 function updateDisplay(dispId, dispContent) {
     document.getElementById('display' + dispId).innerHTML = dispContent;
 
@@ -66,7 +83,11 @@ function updateDisplay(dispId, dispContent) {
 
 
 
+
+
+///////////////////////////////////////////////////////////////////////////////
 // for updating debug display
+///////////////////////////////////////////////////////////////////////////////
 function updateDebug() {
     document.getElementById('num1Complete').textContent =
         ('num1Complete: ' + calcStatus.num1Complete.toString());
@@ -80,7 +101,11 @@ function updateDebug() {
 
 
 
+
+
+///////////////////////////////////////////////////////////////////////////////
 // for resetting calculator values and displays
+///////////////////////////////////////////////////////////////////////////////
 function resetCalc() {
     num1 = '';
     num2 = '';
@@ -101,14 +126,22 @@ function resetCalc() {
 
 
 
+
+
+///////////////////////////////////////////////////////////////////////////////
 // for clearing the paper tape
+///////////////////////////////////////////////////////////////////////////////
 function clearTape() {
     tape = [];
 }
 
 
 
+
+
+///////////////////////////////////////////////////////////////////////////////
 // for recording a number button press by user
+///////////////////////////////////////////////////////////////////////////////
 function logNum(id) {
     var currentBtnId = document.getElementById(id);
 
@@ -142,55 +175,78 @@ function logNum(id) {
 
 
 
+
+
+///////////////////////////////////////////////////////////////////////////////
 // for calculating math result
+///////////////////////////////////////////////////////////////////////////////
 function calculateResult() {
+    console.log('> START calculateResult()');
+    console.log('tape = ' + tape);
     var result = (num1 || '0').toString();
+
+    // if equal button is pressed without having a num2
+    if (operator !== '' && num2 === '') {
+        console.log('START if equal button is pressed without having a num2');
+        console.log('tape = ' + tape);
+        operator = '';
+        tape.pop();
+        logTape('<br>= ' + result + '<br>');
+        console.log('tape = ' + tape);
+        console.log('END if equal button is pressed without having a num2');
+    }
 
     if (operator !== '' && num2 !== '') {
         if (calcStatus.operatorPressedCount >= 1) {
             // when operator button is double-pressed
+            console.log('when operator button is double-pressed');
             result = calculator[operator](+num1, +num2);
             num2 = '';
         } else {
             // when equal button is pressed
+            console.log('when equal button is pressed');
             result = calculator[operator](+num1, +num2);
             resetCalc();
         }
     }
 
-    // if equal button is pressed without having a num2
-    if (num2 === '') {
-        operator = '';
-        tape.pop();
-        logTape('<br>= ' + result + '<br><br>');
-    }
-
     // carry over result
     num1 = result;
-
     updateDisplay(2, num1);
 
-    // this keeps multiple button presses from
-    // filling up the paper tape
+    // ? this keeps multiple button presses from
+    // ? filling up the paper tape
     if (calcStatus.calculationComplete === false &&
         calcStatus.operatorPressedCount === 0) {
-        logTape('<br>= ' + result + '<br><br>');
+        console.log('START this keeps multiple button presses from');
+        console.log('tape = ' + tape);
+        logTape('<br>= ' + result + '<br>');
+        console.log('tape = ' + tape);
+        console.log('END this keeps multiple button presses from');
     }
 
     calcStatus.num1Complete = false;
     calcStatus.calculationComplete = true;
     updateDebug();
+    console.log('tape = ' + tape);
+    console.log('> END calculateResult()');
 }
 
 
 
+
+
+///////////////////////////////////////////////////////////////////////////////
 // for recording operator button press by user
+///////////////////////////////////////////////////////////////////////////////
 function logOperand(id) {
+    console.log('< START logOperand(id)');
+    console.log('tape = ' + tape);
     var currentBtnId = document.getElementById(id);
     var strLog = '';
 
     if (calcStatus.num1Complete || calcStatus.operatorPressedCount >= 1) {
-        // if num1, num2, and an operator button press
+        // if num1, an operator button press, and num2
         // have been input by the user, the subsequent
         // press of an operator button will now
         // calculate that result,
@@ -207,11 +263,24 @@ function logOperand(id) {
         // this keeps the paper tape from being filled
         // with repeated operator button presses
         if (calcStatus.operatorPressedCount >= 2) {
+            console.log('keeps the paper tape from being filled');
+            console.log('1: ' + tape);
             tape.pop();
+            console.log('2: ' + tape);
         }
-        strLog = '' + currentBtnId.innerHTML + ' ';
+
+        // for making the paper tape nicer
+        // (e.g. press operator to complete a calculation,
+        // immediately starting a new calculation)
+        if (calcStatus.calculationComplete === true) {
+            strLog = currentBtnId.innerHTML + ' ';
+        } else {
+            strLog = '<br>' + currentBtnId.innerHTML + ' ';
+        }
     } else if (calcStatus.operatorPressedCount === 0) {
         // if this is the first time an operator button has been pressed
+        console.log('START first time an operator button has been pressed');
+        console.log('tape = ' + tape);
         calcStatus.operatorPressedCount = 1;
         updateDisplay(1, currentBtnId.innerHTML);
         operator = id;
@@ -220,6 +289,8 @@ function logOperand(id) {
         if (calcStatus.calculationComplete === true) {
             strLog = currentBtnId.innerHTML + ' ';
         }
+        console.log('tape = ' + tape);
+        console.log('END first time an operator button has been pressed');
     }
 
     logTape(strLog);
@@ -227,4 +298,6 @@ function logOperand(id) {
     calcStatus.num1Complete = true;
     calcStatus.calculationComplete = false;
     updateDebug();
+    console.log('tape = ' + tape);
+    console.log('< END logOperand(id)');
 }
